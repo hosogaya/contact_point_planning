@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   grid_map_msgs
   grid_map_pcl
   grid_map_ros
+  grid_map_filters
   pcl_ros
   roscpp
   rospy
@@ -113,7 +114,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pcl_to_grid_map
- CATKIN_DEPENDS grid_map_core grid_map_msgs grid_map_pcl grid_map_ros pcl_ros roscpp rospy sensor_msgs nodelet pluginlib
+ CATKIN_DEPENDS grid_map_core grid_map_msgs grid_map_pcl grid_map_ros grid_map_filters pcl_ros roscpp rospy sensor_msgs nodelet pluginlib
 #  DEPENDS system_lib
 )
 

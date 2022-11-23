@@ -1,7 +1,7 @@
 <launch>
     <arg name="camera_name" default="pico_flexx"/>
     <arg name="sensor_id" default=""/>
-    <arg name="use_case" default="0"/>
+    <arg name="use_case" default="5"/>
 
     <arg name="body_frame" default="body"/>
 
@@ -41,9 +41,11 @@
         <arg name="output_pc2" value="/pc2_body"/>
     </include>
 
+    <!-- transfoorm point cloud to grid map -->
     <include file="$(find pcl_to_grid_map)/launch/pcl_to_grid_map.launch">
         <arg name="input" value="/pc2_body"/>
-        <arg name="output" value="/grid_map"/>
+        <arg name="output_raw" value="/grid_map_raw"/>
+        <arg name="output_filtered" value="/grid_map_filtered"/>
         <arg name="nodelet_manager" value="$(arg nodelet_manager)_pcl_to_grid_map"/>
         <arg name="map_frame"              value="$(arg body_name)" />
         <arg name="map_layer_name"         value="elevation" />

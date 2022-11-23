@@ -12,10 +12,30 @@ void PCLToGridMap::onInit() {
     pnh_ = getPrivateNodeHandle();    
     gm::setVerbosityLevelToDebugIfFlagSet(pnh_);
 
-    grid_map_pub_ = nh_.advertise<grid_map_msgs::GridMap>("output", 1);
+    grid_map_raw_pub_ = nh_.advertise<grid_map_msgs::GridMap>("output_raw", 1);
+    gird_map_filtered_pub_ = nh_.advertise<grid_map_msgs::GridMap>("output_filtered", 1);
     point_cloud_sub_ = nh_.subscribe("input", 10, &PCLToGridMap::pointCloudCallback, this);
 
     grid_map_pcl_loader_.loadParameters(gm::getParameterPath(pnh_));
+
+    // Set up the parameters
+    XmlRpc::XmlRpcValue config;
+    config["name"] = "median";
+    config["type"] = "gridMapFilters/MedianFillFilter";
+
+    XmlRpc::XmlRpcValue params;
+    pnh_.getParam("input_layer", params["input_layer"]);
+    pnh_.getParam("output_layer", params["output_layer"]);
+    params["fill_hole_radius"] = 0.02;
+    params["filter_existing_values"] = true;
+    params["existing_value_radius"] = 0.02;
+    params["fill_mask_layer"] = "fill_mask";
+    params["debug"] = false;
+    params["num_erode_dilation_iterations"] = 4;
+
+    config["params"] = params;
+    median_fill_filter_.filters::FilterBase<grid_map::GridMap>::configure(config);
+    median_fill_filter_.configure();
 }
 
 PCLToGridMap::~PCLToGridMap(){}
@@ -33,26 +53,30 @@ void PCLToGridMap::pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr &
     pcl::removeNaNFromPointCloud(*inputCloud, *nanRemovedCloud,*indices);
     nanRemovedCloud->is_dense =true;
 
+    /**
+     *  Process the point cloud 
+     *  Remove outliers, down sampling
+    */
     grid_map_pcl_loader_.setInputCloud(nanRemovedCloud);
-    // gm::processPointcloud(&grid_map_pcl_loader_, pnh_);
-    const auto start = std::chrono::high_resolution_clock::now();
-    grid_map_pcl_loader_.initializeGridMapGeometryFromInputCloud();
-    gm::printTimeElapsedToRosInfoStream(start, "Initialization took: ");
-    grid_map_pcl_loader_.addLayerFromInputCloud(grid_map::grid_map_pcl::getMapLayerName(pnh_));
-    gm::printTimeElapsedToRosInfoStream(start, "Total time: ");
+    gm::processPointcloud(&grid_map_pcl_loader_, pnh_);
 
-    // ROS_ERROR("height%d", inputCloud->height);
-    // ROS_ERROR("width%d", inputCloud->width);
+    /**Create grid map from point cloud*/
+    grid_map::GridMap gridMap_raw = grid_map_pcl_loader_.getGridMap();
+    gridMap_raw.setFrameId(gm::getMapFrame(pnh_));
 
-    grid_map::GridMap gridMap = grid_map_pcl_loader_.getGridMap();
-    gridMap.setFrameId(gm::getMapFrame(pnh_));
-    // gridMap.setTimestamp(ros::Time::now());
-    // publish grid map
-    grid_map_msgs::GridMap grid_map_msg;
-    grid_map::GridMapRosConverter::toMessage(gridMap, grid_map_msg);
-    grid_map_msg.info.header.stamp=ros::Time::now();
-    grid_map_pub_.publish(grid_map_msg);
+    grid_map::GridMap gridMap_filtered;
+    median_fill_filter_.update(gridMap_raw, gridMap_filtered);
 
+    /** convert grid map to message*/
+    grid_map_msgs::GridMap grid_map_raw_msg;
+    grid_map::GridMapRosConverter::toMessage(gridMap_raw, grid_map_raw_msg);
+    grid_map_raw_msg.info.header.stamp=ros::Time::now();
+    grid_map_raw_pub_.publish(grid_map_raw_msg);
+
+    grid_map_msgs::GridMap grid_map_filtered_msg;
+    grid_map::GridMapRosConverter::toMessage(gridMap_filtered, grid_map_filtered_msg);
+    grid_map_filtered_msg.info.header.stamp=ros::Time::now();
+    gird_map_filtered_pub_.publish(grid_map_filtered_msg);
 }
 
 }

@@ -12,8 +12,6 @@ void ContactPointPlanning::onInit() {
 
     sub_pc2_ = nh_.subscribe("/input_pc2", 1, &ContactPointPlanning::callbackPC2, this);
     sub_gm_ = nh_.subscribe("/input_gm", 1, &ContactPointPlanning::callbackGM, this);
-
-    
 }
 
 void ContactPointPlanning::callbackPC2(const sensor_msgs::PointCloud2::ConstPtr& msg) {
@@ -25,7 +23,6 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     grid_map::GridMapRosConverter::fromMessage(*msg, map);
 
     /** fill value of cells whose valuse is Nan */
-    // median_fill_filter_.update(map, filtered_map); // insert filtered map at end of layers
     /** extract the data of the layer */
     std::string filtered_layer = filtered_map.getLayers().back();
     grid_map::Matrix& data = filtered_map.get(filtered_layer);

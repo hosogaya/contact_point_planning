@@ -27,7 +27,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -92,7 +92,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
@@ -107,19 +107,19 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Class: grid_map_rviz_plugin/GridMap
       Color: 200; 200; 200
-      Color Layer: elevation
-      Color Transformer: GridMapLayer
+      Color Layer: elevation_filtered
+      Color Transformer: IntensityLayer
       ColorMap: default
       Enabled: true
       Grid Cell Decimation: 1
       Grid Line Thickness: 0.10000000149011612
-      Height Layer: elevation
-      Height Transformer: GridMapLayer
+      Height Layer: elevation_filtered
+      Height Transformer: ""
       History Length: 1
       Invert ColorMap: false
       Max Color: 255; 255; 255
@@ -128,8 +128,8 @@ Visualization Manager:
       Min Intensity: 0
       Name: GridMap
       Show Grid Lines: true
-      Topic: /grid_map
-      Unreliable: false
+      Topic: /grid_map_filtered
+      Unreliable: true
       Use ColorMap: true
       Value: true
   Enabled: true
@@ -160,7 +160,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.311793804168701
+      Distance: 3.1538662910461426
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -176,9 +176,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5153979063034058
+      Pitch: 0.6103981137275696
       Target Frame: <Fixed Frame>
-      Yaw: 4.74542760848999
+      Yaw: 3.875427722930908
     Saved: ~
 Window Geometry:
   Displays:

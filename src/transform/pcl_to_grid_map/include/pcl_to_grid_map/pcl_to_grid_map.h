@@ -7,6 +7,7 @@
 
 #include <grid_map_pcl/GridMapPclLoader.hpp>
 #include <grid_map_pcl/helpers.hpp>
+#include <grid_map_filters/MedianFillFilter.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/filter.h>
 
@@ -18,9 +19,11 @@ class PCLToGridMap : public nodelet::Nodelet
 private:
     ros::NodeHandle nh_,pnh_;
     ros::Subscriber point_cloud_sub_;
-    ros::Publisher grid_map_pub_;
+    ros::Publisher grid_map_raw_pub_;
+    ros::Publisher gird_map_filtered_pub_;
 
     grid_map::GridMapPclLoader grid_map_pcl_loader_;
+    grid_map::MedianFillFilter median_fill_filter_;
 
 public:
     PCLToGridMap(/* args */);
