@@ -1,0 +1,8 @@
+<library path="lib/libcontact_point_planning">
+    <class name="contact_point_planning/ContactPointPlanning"
+        type="contact_point_planning::ContactPointPlanning"
+        base_class_type="nodelet::Nodelet">
+    <description>
+    </description>
+    </class>
+</library>
