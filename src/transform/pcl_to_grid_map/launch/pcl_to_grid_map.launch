@@ -1,0 +1,27 @@
+<launch>
+    <arg name = "input" default = "/input"/>
+    <arg name = "output" default="/output"/>
+    <arg name="configFilePath_"       default="$(find pcl_to_grid_map)/config/parameters.yaml" />
+    
+    <arg name="map_frame"              default="base_link" />
+    <arg name="map_layer_name"         default="elevation" />
+    <arg name="prefix"                 default=""/>
+    <arg name="set_verbosity_to_debug" default="true"/>
+
+    <arg name="nodelet_manager" default="nodelet_manager"/>
+    <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" 
+        args="manager" output="screen" respawn="true"/>
+
+    <node pkg="nodelet" type="nodelet" name="PCLToGridMap" 
+        args="load transform/pcl_to_grid_map/PCLToGridMap $(arg nodelet_manager)"
+        output="screen" launch-prefix="$(arg prefix)">
+        <remap from = "input" to = "$(arg input)"/>
+        <remap from = "output" to = "$(arg output)"/>
+        <rosparam file="$(arg configFilePath_)" />
+        <param name="configFilePath_"        type="string" value="$(arg configFilePath_)" />
+
+        <param name="map_frame"               type="string" value="$(arg map_frame)" />
+        <param name="map_layer_name"          type="string" value="$(arg map_layer_name)" />
+        <param name="set_verbosity_to_debug"  type="bool"   value="$(arg set_verbosity_to_debug)" />
+    </node>
+</launch>

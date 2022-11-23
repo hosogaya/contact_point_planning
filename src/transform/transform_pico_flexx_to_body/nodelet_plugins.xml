@@ -1,0 +1,8 @@
+<library path="lib/libtransform_pico_flexx_to_body">
+  <class name="transform_pico_flexx_to_body/TransformPicoFlexxToBody"
+     type="transform_pico_flexx_to_body::TransformPicoFlexxToBody"
+     base_class_type="nodelet::Nodelet">
+    <description>
+    </description>
+  </class>
+</library>

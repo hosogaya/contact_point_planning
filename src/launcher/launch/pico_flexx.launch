@@ -1,0 +1,56 @@
+<launch>
+    <arg name="camera_name" default="pico_flexx"/>
+    <arg name="sensor_id" default=""/>
+    <arg name="use_case" default="0"/>
+
+    <arg name="body_frame" default="body"/>
+
+    <arg name="nodelet_manager" default="nodelet_manager"/>
+    <!-- Machine on with the nodes should run. -->
+    <arg name="machine"            default="localhost"/>
+    <!-- Whether the machine for localhost should be defined our not. Disable this if the launch file is included somewhere where machines are already defined. -->
+    <arg name="define_machine" default="true"/>
+    <!-- Default machine definition. -->
+    <machine name="localhost" address="localhost" if="$(arg define_machine)"/>
+    
+
+    <!-- Pico flexx driver -->
+    <include file="$(find pico_flexx_driver)/launch/pico_flexx_driver.launch" >
+        <arg name="base_name" value="$(arg camera_name)"/>
+        <arg name="use_case" value="$(arg use_case)"/>
+        <arg name="sensor" value="$(arg sensor_id)"/>
+        <arg name="publish_tf" value="false"/>
+        <arg name="define_machine" value="$(arg define_machine)"/>
+        <arg name="nodelet_manager" value="$(arg nodelet_manager)_pico_flexx_driver"/>
+    </include>
+    <!-- Static TF publisher for pico flexx.  x: distance, y: left, z: up -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="$(arg camera_name)_to_lens_static_tf" machine="$(arg machine)"
+        args="0 0 0 -1.57079632679489661923 0 -1.57079632679489661923 $(arg camera_name)_lens $(arg camera_name)_optical_frame" />
+
+
+    <!-- transform_pico_flexx_to_body -->
+    <arg name="body_name" default="body"/>
+    <include file="$(find transform_pico_flexx_to_body)/launch/transform_pico_flexx_to_body.launch" >
+        <arg name="pico_flexx_frame" value="$(arg camera_name)_lens"/>
+        <arg name="pico_flexx_base_frame" value="$(arg camera_name)_base"/>
+        <arg name="body_frame" value="$(arg body_name)"/>
+        <arg name="nodelet_manager" value="$(arg nodelet_manager)_transform_pico_flexx_to_body"/>
+    
+        <arg name="input_pc2" value="/$(arg camera_name)/points"/>
+        <arg name="input_yaw" value="/input_yaw"/>
+        <arg name="output_pc2" value="/pc2_body"/>
+    </include>
+
+    <include file="$(find pcl_to_grid_map)/launch/pcl_to_grid_map.launch">
+        <arg name="input" value="/pc2_body"/>
+        <arg name="output" value="/grid_map"/>
+        <arg name="nodelet_manager" value="$(arg nodelet_manager)_pcl_to_grid_map"/>
+        <arg name="map_frame"              value="$(arg body_name)" />
+        <arg name="map_layer_name"         value="elevation" />
+    </include>
+
+    <!-- rviz -->
+    <arg name="rviz" default="true"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find launcher)/rviz/rviz.rviz"/>
+    
+</launch>

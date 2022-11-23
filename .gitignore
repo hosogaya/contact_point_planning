@@ -1,0 +1,6 @@
+src/driver/
+src/external/
+src/.vscode/
+build/
+devel/
+.vscode/

@@ -1,0 +1,8 @@
+<library path="lib/libpcl_to_grid_map">
+  <class name="transform/pcl_to_grid_map/PCLToGridMap"
+     type="transform::pcl_to_grid_map::PCLToGridMap"
+     base_class_type="nodelet::Nodelet">
+    <description>
+    </description>
+  </class>
+</library>
