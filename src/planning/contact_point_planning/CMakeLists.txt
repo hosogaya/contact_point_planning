@@ -156,6 +156,9 @@ add_executable(${PROJECT_NAME}_node src/contact_point_planning.cpp src/node.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -202,6 +205,10 @@ install(TARGETS
 
 install(DIRECTORY
   launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  nodelet.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

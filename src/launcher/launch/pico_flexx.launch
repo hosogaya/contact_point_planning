@@ -51,6 +51,13 @@
         <arg name="map_layer_name"         value="elevation" />
     </include>
 
+    <!-- contact point planning -->
+    <include file="$(find contact_point_planning)/launch/contact_point_planning.launch">
+        <are name="nodelet_manager" value="$(arg nodelet_manager)_contact_point_planning"/>
+        <arg name="input_pc2" value="/pc2_body"/> 
+        <arg name="input_gm" value="/grid_map_filtered"/> 
+    </include>
+
     <!-- rviz -->
     <arg name="rviz" default="true"/>
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find launcher)/rviz/rviz.rviz"/>

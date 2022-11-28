@@ -3,10 +3,14 @@
     <arg name="input_pc2" default="/input_pc2"/>
     <arg name="input_gm" default="/input_gm"/>
 
-    <node pkg="nodelet" type="nodelet" name="ContactPointPlanning"
-        args="load contact_point_planning/ContactPointPlanning $(arg nodelet_manager)">
+    <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" 
+        args="manager" output="screen" respawn="true"/>
 
-        <remap from="/input_pc2" to="$(arg input_pc2)" />
-        <remap from="/input_gm" to="$(arg input_gm)" />
+    <node pkg="nodelet" type="nodelet" name="ContactPointPlanning"
+        args="load contact_point_planning/ContactPointPlanning $(arg nodelet_manager)"
+        output="screen">
+
+        <!-- <remap from="/input_pc2" to="$(arg input_pc2)" />
+        <remap from="/input_gm" to="$(arg input_gm)" /> -->
     </node>
 </launch>
