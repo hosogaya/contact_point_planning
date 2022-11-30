@@ -56,6 +56,7 @@
         <are name="nodelet_manager" value="$(arg nodelet_manager)_contact_point_planning"/>
         <arg name="input_pc2" value="/pc2_body"/> 
         <arg name="input_gm" value="/grid_map_filtered"/> 
+        <arg name="output_gm" value="/planning_map"/>
     </include>
 
     <!-- rviz -->

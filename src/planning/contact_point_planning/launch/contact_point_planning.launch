@@ -2,6 +2,10 @@
     <arg name="nodelet_manager" default="nodelet_manager"/>
     <arg name="input_pc2" default="/input_pc2"/>
     <arg name="input_gm" default="/input_gm"/>
+    <arg name="output_gm" default="/output_gm"/>
+
+    <arg name="input_layer" default="elevation_filtered"/>
+    <arg name="variance_layer" default="variance"/>
 
     <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" 
         args="manager" output="screen" respawn="true"/>
@@ -10,7 +14,11 @@
         args="load contact_point_planning/ContactPointPlanning $(arg nodelet_manager)"
         output="screen">
 
-        <!-- <remap from="/input_pc2" to="$(arg input_pc2)" />
-        <remap from="/input_gm" to="$(arg input_gm)" /> -->
+        <param name="input_layer" value="$(arg input_layer)"/>
+        <param name="variance_layer" value="$(arg variance_layer)"/>
+
+        <remap from="/input_pc2" to="$(arg input_pc2)" />
+        <remap from="/input_gm" to="$(arg input_gm)" />
+        <remap from="/output_gm" to="$(arg output_gm)"/>
     </node>
 </launch>

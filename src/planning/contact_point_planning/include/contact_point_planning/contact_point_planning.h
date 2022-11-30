@@ -16,8 +16,8 @@ class ContactPointPlanning : public nodelet::Nodelet
         ros::Subscriber sub_pc2_, sub_gm_;
         ros::Publisher pub_gm_;
 
-        std::string input_layer_ = "elevation_filtered";
-        std::string variance_layer_ = "variance";
+        std::string input_layer_;
+        std::string variance_layer_;
 
         void callbackPC2(const sensor_msgs::PointCloud2::ConstPtr& msg);
         void callbackGM(const grid_map_msgs::GridMap::ConstPtr& msg);

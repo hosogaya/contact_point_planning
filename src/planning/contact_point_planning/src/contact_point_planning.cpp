@@ -11,8 +11,11 @@ void ContactPointPlanning::onInit() {
     pnh_ = getPrivateNodeHandle();
 
     sub_pc2_ = nh_.subscribe("/input_pc2", 1, &ContactPointPlanning::callbackPC2, this);
-    sub_gm_ = nh_.subscribe("/grid_map_filtered", 1, &ContactPointPlanning::callbackGM, this);
+    sub_gm_ = nh_.subscribe("/input_gm", 1, &ContactPointPlanning::callbackGM, this);
     pub_gm_ = nh_.advertise<grid_map_msgs::GridMap>("/output_gm", 1);
+
+    pnh_.param<std::string>("variance_layer", variance_layer_, "variance");
+    pnh_.param<std::string>("input_layer", input_layer_, "elevation_filtered");
 }
 
 void ContactPointPlanning::callbackPC2(const sensor_msgs::PointCloud2::ConstPtr& msg) {
