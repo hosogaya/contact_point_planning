@@ -1,0 +1,12 @@
+<launch>    
+    <arg name="input" default="/input"/>
+    <arg name="output" default="/output"/>
+
+    <arg name="test" default="false"/>
+
+    <node name="contact_point_marker" pkg="contact_point_marker" type="contact_point_marker_node" output="screen">
+        <remap from="/input" to="$(arg input)"/>
+        <remap from="/output" to="$(arg output)"/>
+        <param name="publish_dummy" value="$(arg test)"/>
+    </node>
+</launch>
