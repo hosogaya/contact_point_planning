@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /TF1/Frames1
         - /GridMap2
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 719
   - Class: rviz/Selection
@@ -156,6 +157,14 @@ Visualization Manager:
       Unreliable: false
       Use ColorMap: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /planned_cp
+      Name: Marker
+      Namespaces:
+        Planned_contact_point: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -184,7 +193,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.8539862632751465
+      Distance: 1.0418763160705566
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -200,9 +209,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.18539804220199585
+      Pitch: 0.4053973853588104
       Target Frame: <Fixed Frame>
-      Yaw: 4.4304399490356445
+      Yaw: 4.26046895980835
     Saved: ~
 Window Geometry:
   Displays:

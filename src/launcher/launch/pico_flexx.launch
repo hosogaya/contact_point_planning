@@ -59,6 +59,13 @@
         <arg name="output_gm" value="/planning_map"/>
     </include>
 
+    <!-- visualizatoin -->
+    <include file="$(find contact_point_marker)/launch/contact_point_marker.launch">
+        <arg name="input" value="/output_cp"/>
+        <arg name="output" value="/planned_cp"/>
+        <arg name="test" value="false"/>
+    </include>
+
     <!-- rviz -->
     <arg name="rviz" default="true"/>
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find launcher)/rviz/rviz.rviz"/>

@@ -22,7 +22,7 @@ void ContactPointMarker::callbackContactPointMarker(const geometry_msgs::PoseSta
     marker.ns = "Planned_contact_point";
     marker.id = 0;
 
-    marker.type = visualization_msgs::Marker::CUBE;
+    marker.type = visualization_msgs::Marker::SPHERE;
     marker.action = visualization_msgs::Marker::ADD;
     marker.lifetime = ros::Duration();
 
@@ -32,7 +32,7 @@ void ContactPointMarker::callbackContactPointMarker(const geometry_msgs::PoseSta
     marker.color.g = 1.0f;
     marker.color.a = 1.0f;
 
-    float radius = 0.010f; // 10mm  
+    float radius = 0.050f; // 10mm  
     marker.scale.x = radius;
     marker.scale.y = radius;
     marker.scale.z = radius;

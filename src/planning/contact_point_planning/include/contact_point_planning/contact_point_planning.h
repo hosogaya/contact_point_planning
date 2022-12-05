@@ -2,6 +2,8 @@
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
 
+#include <geometry_msgs/PoseStamped.h>
+
 #include <sensor_msgs/PointCloud2.h>
 #include <grid_map_core/GridMap.hpp>
 #include <grid_map_ros/grid_map_ros.hpp>
@@ -14,7 +16,7 @@ class ContactPointPlanning : public nodelet::Nodelet
     private:
         ros::NodeHandle nh_, pnh_;
         ros::Subscriber sub_pc2_, sub_gm_;
-        ros::Publisher pub_gm_;
+        ros::Publisher pub_gm_, pub_contact_point_;
 
         std::string input_layer_;
         std::string variance_layer_;
