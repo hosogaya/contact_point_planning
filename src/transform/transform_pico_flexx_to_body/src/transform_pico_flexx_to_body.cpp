@@ -27,7 +27,7 @@ namespace transform_pico_flexx_to_body {
         transform_pico_flexx_base_to_focus_.transform.translation.y = 0.0;
         transform_pico_flexx_base_to_focus_.transform.translation.z = 0.0;
         tf2::Quaternion q_pico_to_base;
-        q_pico_to_base.setRPY(0.0, M_PI/4.0, 0.0);        
+        q_pico_to_base.setRPY(0.0, 55.0f*M_PI/180.0f, 0.0);        
         transform_pico_flexx_base_to_focus_.transform.rotation.x = q_pico_to_base.getX();
         transform_pico_flexx_base_to_focus_.transform.rotation.y = q_pico_to_base.getY();
         transform_pico_flexx_base_to_focus_.transform.rotation.z = q_pico_to_base.getZ();

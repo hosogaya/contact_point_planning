@@ -39,23 +39,32 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     grid_map::Matrix& variance_mat{map[variance_layer_]};
 
     /** fill variance to each cell */
+    size_t window_size = 5;
     for (grid_map::GridMapIterator iterator(map); !iterator.isPastEnd(); ++iterator) {
         const grid_map::Index index(*iterator);
         auto& variance{variance_mat(index(0), index(1))};
         if (!std::isfinite(height_map(index(0), index(1)))) continue;
         variance = 0.0f;
         int num = 0;
-        for (int i = -1; i <=1; ++i) 
-            for (int j = -1; j <=1; ++j) {
+        bool is_finite = true;
+        for (int i = -floor(window_size/2); i <=floor(window_size/2); ++i) {
+            for (int j = -floor(window_size/2); j <=floor(window_size/2); ++j) {
                 if (index(0)+i >= 0 && index(0)+i < map.getSize()(0) && index(1)+j >=0 && index(1)+j < map.getSize()(1)) {
                     auto& height = height_map(index(0)+i, index(1)+j);
-                    if (std::isfinite(height)) {
+                    if (!std::isfinite(height)) {
+                        is_finite = false;
+                        break;
+                    }
+                    else {
                         num++;
                         variance += std::pow(height_map(index(0)+i, index(1)+j) - height_map(index(0), index(1)), 2.0f);
                     }
-                }   
-            }
-        if (num != 0) {
+                } // end if    
+            }// end for j
+            if (!is_finite) break;
+        }// end for i 
+
+        if (num == window_size*window_size) {
             variance /= num;
             // variance *= 1e6; // m->mm
         }
@@ -63,6 +72,46 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     }
 
     // normalize 
+    double max,min;
+    bool initialize_flag = false;
+    for (grid_map::GridMapIterator iterator(map); !iterator.isPastEnd(); ++iterator) {
+        const grid_map::Index index(*iterator);
+        auto& variance{variance_mat(index(0), index(1))};
+        if (!std::isfinite(variance_mat(index(0), index(1)))) continue;
+        if (!initialize_flag) {
+            max = variance;
+            min = variance;
+            initialize_flag = true;
+        }
+        else {
+            if (variance > max) {
+                max = variance;
+            }
+            if (variance < min) {
+                min = variance;
+            }
+        }
+    }
+
+    /** add layer for variance */
+    std::string normalized_variance_layer = variance_layer_+"normalized";
+    if (!map.exists(normalized_variance_layer)) {
+        map.add(normalized_variance_layer);
+    }
+
+     for (grid_map::GridMapIterator iterator(map); !iterator.isPastEnd(); ++iterator) {
+        const grid_map::Index index(*iterator);
+        auto& variance{variance_mat(index(0), index(1))};
+        auto& normalized_variance{map[normalized_variance_layer](index(0), index(1))};
+        
+        if (!std::isfinite(variance_mat(index(0), index(1)))) {
+            normalized_variance = NAN;
+        }
+        else {
+            normalized_variance = (variance - min)/(max - min);        
+        }
+
+    }
 
     /* publish variance layer*/
     grid_map_msgs::GridMap grid_map_msg;
@@ -75,7 +124,7 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     /* decide searching area */
     ROS_INFO("variance map is published");
     auto& center{map.getPosition()};
-    float radius = 0.05;
+    float radius = 0.10;
     ROS_INFO("Configurations of iterator is defined");
     /**
      *  create iterator for the searching area, (spiral iterator)
@@ -83,21 +132,22 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     grid_map::Index solution_ind;
     grid_map::Position pos;
     float height;
+    double solution_variance;
+    solution_variance = 0.5;
     ROS_INFO("Containars are prepared");
     for (grid_map::SpiralIterator iterator(map, center, radius); !iterator.isPastEnd(); ++iterator) {
         const grid_map::Index index(*iterator);
-        auto& variance{variance_mat(index(0), index(1))};
+        auto& variance{map[normalized_variance_layer](index(0), index(1))};
         ROS_INFO("Information of the cell is extracted");
 
         if (!std::isfinite(variance)) continue;
-        if (variance < 1.0){
-            ROS_INFO("Find a feasible cell");
+        if (variance < solution_variance){
+            solution_variance = variance;
             solution_ind = index;
             map.getPosition(index, pos);
             auto& h{height_map(index(0), index(1))};
             height = h;
             ROS_INFO("update variables");
-            break;
         }
     }
     ROS_INFO("Iteration is finished");
