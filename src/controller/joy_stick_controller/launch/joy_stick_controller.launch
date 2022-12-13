@@ -1,0 +1,8 @@
+<launch>
+    <!-- launch joy stick driver -->
+    <node name="joy_node" pkg="joy" type="joy_node" />
+
+    <node name="joy_stick_controller" pkg="joy_stick_controller" type="joy_stick_controller_node">
+        
+    </node>
+</launch>
