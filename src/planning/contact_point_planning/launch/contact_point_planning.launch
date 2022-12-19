@@ -17,7 +17,7 @@
         <param name="input_layer" value="$(arg input_layer)"/>
         <param name="variance_layer" value="$(arg variance_layer)"/>
 
-        <rosparam command="laod" file="$(find contact_point_planning)/config/contact_point_planning.param.yaml" />
+        <rosparam command="load" file="$(find contact_point_planning)/config/contact_point_planning.param.yaml" />
 
         <remap from="/input_pc2" to="$(arg input_pc2)" />
         <remap from="/input_gm" to="$(arg input_gm)" />
