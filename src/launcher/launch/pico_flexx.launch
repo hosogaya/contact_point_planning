@@ -1,8 +1,11 @@
 <launch>
+    <arg name="use_joy_stick" default="false"/>
+
     <arg name="camera_name" default="pico_flexx"/>
     <arg name="sensor_id" default=""/>
     <arg name="use_case" default="5"/>
 
+    <arg name="base_link" default="base_link"/>
     <arg name="body_frame" default="body"/>
 
     <arg name="nodelet_manager" default="nodelet_manager"/>
@@ -15,56 +18,88 @@
     
 
     <!-- Pico flexx driver -->
-    <include file="$(find pico_flexx_driver)/launch/pico_flexx_driver.launch" >
-        <arg name="base_name" value="$(arg camera_name)"/>
-        <arg name="use_case" value="$(arg use_case)"/>
-        <arg name="sensor" value="$(arg sensor_id)"/>
-        <arg name="publish_tf" value="false"/>
-        <arg name="define_machine" value="$(arg define_machine)"/>
-        <arg name="nodelet_manager" value="$(arg nodelet_manager)_pico_flexx_driver"/>
-    </include>
-    <!-- Static TF publisher for pico flexx.  x: distance, y: left, z: up -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="$(arg camera_name)_to_lens_static_tf" machine="$(arg machine)"
-        args="0 0 0 -1.57079632679489661923 0 -1.57079632679489661923 $(arg camera_name)_lens $(arg camera_name)_optical_frame" />
+    <group ns="driver">
+        <include file="$(find pico_flexx_driver)/launch/pico_flexx_driver.launch" >
+            <arg name="base_name" value="$(arg camera_name)"/>
+            <arg name="use_case" value="$(arg use_case)"/>
+            <arg name="sensor" value="$(arg sensor_id)"/>
+            <arg name="publish_tf" value="false"/>
+            <arg name="define_machine" value="$(arg define_machine)"/>
+            <arg name="nodelet_manager" value="$(arg nodelet_manager)_pico_flexx_driver"/>
+        </include>
+        <!-- Static TF publisher for pico flexx.  x: distance, y: left, z: up -->
+        <node pkg="tf2_ros" type="static_transform_publisher" name="$(arg camera_name)_to_lens_static_tf" machine="$(arg machine)"
+            args="0 0 0 -1.57079632679489661923 0 -1.57079632679489661923 $(arg camera_name)_lens $(arg camera_name)_optical_frame" />
+    </group>
 
-
-    <!-- transform_pico_flexx_to_body -->
-    <arg name="body_name" default="body"/>
-    <include file="$(find transform_pico_flexx_to_body)/launch/transform_pico_flexx_to_body.launch" >
-        <arg name="pico_flexx_frame" value="$(arg camera_name)_lens"/>
-        <arg name="pico_flexx_base_frame" value="$(arg camera_name)_base"/>
-        <arg name="body_frame" value="$(arg body_name)"/>
-        <arg name="nodelet_manager" value="$(arg nodelet_manager)_transform_pico_flexx_to_body"/>
-    
-        <arg name="input_pc2" value="/$(arg camera_name)/points"/>
-        <arg name="input_yaw" value="/input_yaw"/>
-        <arg name="output_pc2" value="/pc2_body"/>
-    </include>
-
-    <!-- transfoorm point cloud to grid map -->
-    <include file="$(find pcl_to_grid_map)/launch/pcl_to_grid_map.launch">
-        <arg name="input" value="/pc2_body"/>
-        <arg name="output_raw" value="/grid_map_raw"/>
-        <arg name="output_filtered" value="/grid_map_filtered"/>
-        <arg name="nodelet_manager" value="$(arg nodelet_manager)_pcl_to_grid_map"/>
-        <arg name="map_frame"              value="$(arg body_name)" />
-        <arg name="map_layer_name"         value="elevation" />
-    </include>
+    <group ns="transform">
+        <!-- transform_pico_flexx_to_body -->
+        <include file="$(find transform_pico_flexx_to_body)/launch/transform_pico_flexx_to_body.launch" >
+            <arg name="pico_flexx_frame" value="$(arg camera_name)_lens"/>
+            <arg name="pico_flexx_base_frame" value="$(arg camera_name)_base"/>
+            <arg name="body_frame" value="$(arg body_frame)"/>
+            <arg name="base_link" value="$(arg base_link)"/>
+            <arg name="nodelet_manager" value="$(arg nodelet_manager)_transform_pico_flexx_to_body"/>
+        
+            <arg name="input_yaw" value="/interface/camera_yaw"/>
+            <arg name="input_imu" value="/interface/imu"/>
+        </include>
+        <!-- transfoorm point cloud to grid map -->
+        <include file="$(find pcl_to_grid_map)/launch/pcl_to_grid_map.launch">
+            <arg name="input" value="/driver/$(arg camera_name)/points"/>
+            <arg name="output_raw" value="grid_map_raw"/>
+            <arg name="output_filtered" value="grid_map_filtered"/>
+            <arg name="output_pc2" value="transformed_pc2"/>
+            <arg name="nodelet_manager" value="$(arg nodelet_manager)_pcl_to_grid_map"/>
+            <arg name="output_frame"              value="$(arg base_link)" />
+            <arg name="map_layer_name"         value="elevation" />
+        </include>
+    </group>
 
     <!-- contact point planning -->
-    <include file="$(find contact_point_planning)/launch/contact_point_planning.launch">
-        <are name="nodelet_manager" value="$(arg nodelet_manager)_contact_point_planning"/>
-        <arg name="input_pc2" value="/pc2_body"/> 
-        <arg name="input_gm" value="/grid_map_filtered"/> 
-        <arg name="output_gm" value="/planning_map"/>
-    </include>
+    <group ns="planning">
+        <include file="$(find contact_point_planning)/launch/contact_point_planning.launch">
+            <arg name="nodelet_manager" value="$(arg nodelet_manager)_contact_point_planning"/>
+            <arg name="input_pc2" value="/transform/transformed_pc2"/> 
+            <arg name="input_gm" value="/transform/grid_map_filtered"/> 
+            <arg name="output_gm" value="planning_map"/>
+            <arg name="output_cp" value="planned_contact_point"/>
+        </include>
+    </group>
+
+    <!-- controller -->
+    <group ns="controller">
+        <include file="$(find joy_stick_controller)/launch/joy_stick_controller.launch">
+            <arg name="use_joy_stick" value="$(arg use_joy_stick)"/>
+            <arg name="output_yaw_rate" value="yaw_rate_ref"/>
+            <arg name="output_attitude" value="attitude_ref"/>
+            <arg name="output_behavior" value="behavior_ref"/>
+            <arg name="output_cp" value="planned_cp_ref"/>
+            <arg name="input_cp" value="/planning/planned_contact_point"/>
+        </include>
+    </group>
+
+    <group ns="interface">
+        <include file="$(find micro_ros_interface)/launch/micro_ros_interface.launch">
+            <arg name="input_yaw_rate" value="/controller/yaw_rate_ref"/>
+            <arg name="input_next_cp" value="/controller/planned_cp_ref"/>
+            <arg name="input_imu" value="/teensy/imu"/>
+            <arg name="input_camera_yaw" value="/teensy/camera_yaw"/>
+            <arg name="output_imu" value="imu"/>
+            <arg name="output_next_cp" value="planned_cp"/>
+            <arg name="output_yaw_rate" value="yaw_rate"/>
+            <arg name="output_camera_yaw" value="camera_yaw"/>
+        </include>
+    </group>
 
     <!-- visualizatoin -->
-    <include file="$(find contact_point_marker)/launch/contact_point_marker.launch">
-        <arg name="input" value="/output_cp"/>
-        <arg name="output" value="/planned_cp"/>
-        <arg name="test" value="false"/>
-    </include>
+    <group ns="visualizatoin">
+        <include file="$(find contact_point_marker)/launch/contact_point_marker.launch">
+            <arg name="input" value="/planning/planned_contact_point"/>
+            <arg name="output" value="planned_cp"/>
+            <arg name="test" value="false"/>
+        </include>
+    </group>
 
     <!-- rviz -->
     <arg name="rviz" default="true"/>

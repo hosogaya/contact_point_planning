@@ -3,6 +3,7 @@
 #include <pluginlib/class_list_macros.h>
 
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PointStamped.h>
 
 #include <sensor_msgs/PointCloud2.h>
 #include <grid_map_core/GridMap.hpp>
@@ -20,6 +21,8 @@ class ContactPointPlanning : public nodelet::Nodelet
 
         std::string input_layer_;
         std::string variance_layer_;
+
+        geometry_msgs::PointStamped planned_cp_msg_;
 
         void callbackPC2(const sensor_msgs::PointCloud2::ConstPtr& msg);
         void callbackGM(const grid_map_msgs::GridMap::ConstPtr& msg);

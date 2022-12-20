@@ -2,12 +2,14 @@
     <arg name="pico_flexx_frame" default="pico_flexx_lens"/>
     <arg name="pico_flexx_base_frame" default="pico_flexx_base"/>
     <arg name="body_frame" default="body"/>
+    <arg name="base_link" default="base_link"/>
 
     <arg name="pico_flexx_base_height" default="124.489*1e-3"/>
     <arg name="pico_flexx_base_radius" default="83.549*1e-3"/>
 
     <arg name="input_pc2" default="/input_pc2"/>
     <arg name="input_yaw" default="/input_yaw"/>
+    <arg name="input_imu" default="/input_imu"/>
     <arg name="output_pc2" default="/output_pc2"/>
 
 
@@ -18,13 +20,13 @@
         args="load transform_pico_flexx_to_body/TransformPicoFlexxToBody $(arg nodelet_manager)"
         output="screen">
 
-        <remap from="/input_pc2" to="$(arg input_pc2)"/>
-        <remap from="/input_yaw" to="$(arg input_yaw)"/>
-        <remap from="/output_pc2" to="$(arg output_pc2)"/>
+        <remap from="input_yaw" to="$(arg input_yaw)"/>
+        <remap from="input_imu" to="$(arg input_imu)"/>
 
-        <param name="input_frame" value="$(arg pico_flexx_frame)"/>
-        <param name="intermediate_frame" value="$(arg pico_flexx_base_frame)"/>
-        <param name="output_frame" value="$(arg body_frame)"/>
+        <param name="pico_flexx_frame" value="$(arg pico_flexx_frame)"/>
+        <param name="pico_flexx_motor_frame" value="$(arg pico_flexx_base_frame)"/>
+        <param name="body_frame" value="$(arg body_frame)"/>
+        <param name="base_link" value="$(arg base_link)"/>
 
         <param name="height" value="$(arg pico_flexx_base_height)"/>
         <param name="radius" value="$(arg pico_flexx_base_radius)"/>

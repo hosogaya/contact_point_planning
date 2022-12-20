@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(pcl_to_grid_map)
+project(micro_ros_interface)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,20 +8,11 @@ project(pcl_to_grid_map)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  grid_map_core
-  grid_map_msgs
-  grid_map_pcl
-  grid_map_ros
-  grid_map_filters
-  pcl_ros
+  geometry_msgs
   roscpp
   rospy
   sensor_msgs
-  pcl_conversions
-  nodelet
-  pluginlib
-  tf2_ros
-  tf2_geometry_msgs
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -81,7 +72,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   grid_map_msgs#   sensor_msgs
+#   geometry_msgs#   sensor_msgs#   std_msgs
 # )
 
 ################################################
@@ -115,8 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES pcl_to_grid_map
- CATKIN_DEPENDS grid_map_core grid_map_msgs grid_map_pcl grid_map_ros grid_map_filters pcl_ros roscpp rospy sensor_msgs nodelet pluginlib tf2_ros tf2_geometry_msgs
+#  LIBRARIES micro_ros_interface
+ CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 
@@ -133,7 +124,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/pcl_to_grid_map.cpp
+  src/micro_ros_interface.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -144,7 +135,7 @@ add_library(${PROJECT_NAME}
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/pcl_to_grid_map.cpp src/node.cpp)
+add_executable(${PROJECT_NAME}_node src/micro_ros_interface.cpp src/node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,6 +151,7 @@ add_executable(${PROJECT_NAME}_node src/pcl_to_grid_map.cpp src/node.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
+
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
@@ -206,19 +198,11 @@ target_link_libraries(${PROJECT_NAME}
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-install(TARGETS
-  ${PROJECT_NAME}_node
+install(TARGETS ${PROJECT_NAME}_node
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
 install(DIRECTORY
-  config
   launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-install(FILES
-  nodelet.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
@@ -227,7 +211,7 @@ install(FILES
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_pcl_to_grid_map.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_micro_ros_interface.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

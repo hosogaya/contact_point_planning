@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PointStamped.h>
 #include <visualization_msgs/Marker.h>
 
 
@@ -12,9 +13,11 @@ class ContactPointMarker {
         ros::Subscriber contact_point_sub_;
         ros::Timer timer_;
 
+        visualization_msgs::Marker marker_msg_;
+
         bool publish_dummy_;
 
-        void callbackContactPointMarker(const geometry_msgs::PoseStamped::ConstPtr& msg);
+        void callbackContactPointMarker(const geometry_msgs::PointStamped::ConstPtr& msg);
         void timerCallbackPublishDummy(const ros::TimerEvent& e);
 
     public:

@@ -13,7 +13,7 @@ void ContactPointPlanning::onInit() {
     sub_pc2_ = nh_.subscribe("/input_pc2", 1, &ContactPointPlanning::callbackPC2, this);
     sub_gm_ = nh_.subscribe("/input_gm", 1, &ContactPointPlanning::callbackGM, this);
     pub_gm_ = nh_.advertise<grid_map_msgs::GridMap>("/output_gm", 1);
-    pub_contact_point_ = nh_.advertise<geometry_msgs::PoseStamped>("/output_cp", 1);
+    pub_contact_point_ = nh_.advertise<geometry_msgs::PointStamped>("/output_cp", 1);
 
     pnh_.param<std::string>("variance_layer", variance_layer_, "variance");
     pnh_.param<std::string>("input_layer", input_layer_, "elevation_filtered");
@@ -151,22 +151,17 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
         }
     }
     ROS_INFO("Iteration is finished");
-    geometry_msgs::PoseStamped pose_msg;
-    pose_msg.header.frame_id = map.getFrameId();
-    pose_msg.header.stamp = ros::Time::now();
+    
+    planned_cp_msg_.header.frame_id = map.getFrameId();
+    planned_cp_msg_.header.stamp = ros::Time::now();
 
-    // pose_msg.pose.position.x = pos.x();
-    // pose_msg.pose.position.y = pos.y();
-    pose_msg.pose.position.x = pos(0);
-    pose_msg.pose.position.y = pos(1);
-    pose_msg.pose.position.z = height;
+    // planned_cp_msg_.pose.position.x = pos.x();
+    // planned_cp_msg_.pose.position.y = pos.y();
+    planned_cp_msg_.point.x = pos(0);
+    planned_cp_msg_.point.y = pos(1);
+    planned_cp_msg_.point.z = height;
 
-    pose_msg.pose.orientation.x = 0.0;
-    pose_msg.pose.orientation.y = 0.0;
-    pose_msg.pose.orientation.z = 0.0;
-    pose_msg.pose.orientation.w = 1.0;
-
-    pub_contact_point_.publish(pose_msg);
+    pub_contact_point_.publish(planned_cp_msg_);
     ROS_INFO("Publish pose message");
 
    /**

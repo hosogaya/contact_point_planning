@@ -1,8 +1,23 @@
 <launch>
     <!-- launch joy stick driver -->
-    <node name="joy_node" pkg="joy" type="joy_node" />
+    <arg name="use_joy_stick" default="true"/>
+    
+    <group if="$(arg use_joy_stick)">
+        <node name="joy_node" pkg="joy" type="joy_node" />
+    </group>
+
+    
+    <arg name="output_yaw_rate" default="output_yaw_rate"/>
+    <arg name="output_attitude" default="output_attitude"/>
+    <arg name="output_behavior" default="output_behavior"/>
+    <arg name="output_cp" default="output_cp"/>
+    <arg name="input_cp" default="input_cp"/>
 
     <node name="joy_stick_controller" pkg="joy_stick_controller" type="joy_stick_controller_node">
-        
+        <remap from="output_yaw_rate" to="$(arg output_yaw_rate)"/>
+        <remap from="output_attitude" to="$(arg output_attitude)"/>
+        <remap from="output_behavior" to="$(arg output_behavior)"/>
+        <remap from="output_cp" to="$(arg output_cp)"/>
+        <remap from="input_cp" to="$(arg input_cp)"/>
     </node>
 </launch>
