@@ -12,11 +12,19 @@ void ContactPointPlanning::onInit() {
 
     sub_pc2_ = nh_.subscribe("/input_pc2", 1, &ContactPointPlanning::callbackPC2, this);
     sub_gm_ = nh_.subscribe("/input_gm", 1, &ContactPointPlanning::callbackGM, this);
+    planning_leg_id_sub_ =  nh_.subscribe("input_planning_leg_id", 1, &ContactPointPlanning::planningLegIdCallback, this);
     pub_gm_ = nh_.advertise<grid_map_msgs::GridMap>("/output_gm", 1);
     pub_contact_point_ = nh_.advertise<geometry_msgs::PointStamped>("/output_cp", 1);
 
     pnh_.param<std::string>("variance_layer", variance_layer_, "variance");
     pnh_.param<std::string>("input_layer", input_layer_, "elevation_filtered");
+    pnh_.param<float>("searching_area_radius", searching_area_radius_, 0.1f);
+    pnh_.param<float>("center_x", searching_area_center_x_, 0.230f);
+    pnh_.param<float>("center_y", searching_area_center_y_, 0.170f);
+
+    ROS_INFO("radius: %f", searching_area_radius_);
+    ROS_INFO("center_x: %f", searching_area_center_x_);
+    ROS_INFO("center_y: %f", searching_area_center_y_);
 }
 
 void ContactPointPlanning::callbackPC2(const sensor_msgs::PointCloud2::ConstPtr& msg) {
@@ -27,13 +35,23 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     grid_map::GridMap map;
     grid_map::GridMapRosConverter::fromMessage(*msg, map);
 
+    /** Create reference of Marix for variance layer */
+    if (!map.exists(input_layer_)) return; // 
+
+    // check whether the searching are is in the grid map
+    try {
+        map.atPosition(input_layer_, searching_area_center_);
+    }
+    catch (std::out_of_range& e) {
+        ROS_INFO("%s", e.what());
+        return;
+    }
+
     /** create variance layer */
     /** add layer for variance */
     if (!map.exists(variance_layer_)) {
         map.add(variance_layer_);
     }
-    /** Create reference of Marix for variance layer */
-    if (!map.exists(input_layer_)) return; // 
 
     const grid_map::Matrix& height_map{map[input_layer_]};
     grid_map::Matrix& variance_mat{map[variance_layer_]};
@@ -123,25 +141,22 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
 
     /* decide searching area */
     ROS_INFO("variance map is published");
-    auto& center{map.getPosition()};
-    float radius = 0.10;
-    ROS_INFO("Configurations of iterator is defined");
     /**
      *  create iterator for the searching area, (spiral iterator)
     */
     grid_map::Index solution_ind;
     grid_map::Position pos;
     float height;
-    double solution_variance;
-    solution_variance = 0.5;
+    float solution_variance;
+    solution_variance = thres_variance_;
     ROS_INFO("Containars are prepared");
-    for (grid_map::SpiralIterator iterator(map, center, radius); !iterator.isPastEnd(); ++iterator) {
+    for (grid_map::SpiralIterator iterator(map, searching_area_center_, searching_area_radius_); !iterator.isPastEnd(); ++iterator) {
         const grid_map::Index index(*iterator);
         auto& variance{map[normalized_variance_layer](index(0), index(1))};
         ROS_INFO("Information of the cell is extracted");
 
         if (!std::isfinite(variance)) continue;
-        if (variance < solution_variance){
+        if (variance < solution_variance) {
             solution_variance = variance;
             solution_ind = index;
             map.getPosition(index, pos);
@@ -152,23 +167,33 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     }
     ROS_INFO("Iteration is finished");
     
-    planned_cp_msg_.header.frame_id = map.getFrameId();
-    planned_cp_msg_.header.stamp = ros::Time::now();
+    if (solution_variance < thres_variance_) {
+        planned_cp_msg_.header.frame_id = map.getFrameId();
+        planned_cp_msg_.header.stamp = ros::Time::now();
 
-    // planned_cp_msg_.pose.position.x = pos.x();
-    // planned_cp_msg_.pose.position.y = pos.y();
-    planned_cp_msg_.point.x = pos(0);
-    planned_cp_msg_.point.y = pos(1);
-    planned_cp_msg_.point.z = height;
+        planned_cp_msg_.point.x = pos(0);
+        planned_cp_msg_.point.y = pos(1);
+        planned_cp_msg_.point.z = height;
 
-    pub_contact_point_.publish(planned_cp_msg_);
-    ROS_INFO("Publish pose message");
+        pub_contact_point_.publish(planned_cp_msg_);
+        ROS_INFO("Publish pose message");
+    }
 
-   /**
-    * evaluate cells in the searching are, 
-    * and get a feasible ground contact point 
-   */
 }
+
+void ContactPointPlanning::planningLegIdCallback(const std_msgs::Int8::ConstPtr& msg) {
+    planning_leg_id_ = msg->data;
+    if (planning_leg_id_ == 0) {
+        searching_area_center_.x() = searching_area_center_x_;
+        searching_area_center_.y() =-searching_area_center_y_;
+    }
+    else if (planning_leg_id_ == 5) {
+        searching_area_center_.x() = searching_area_center_x_;
+        searching_area_center_.y() = searching_area_center_y_;
+    }
+    ROS_INFO("searching are center: %f, %f", searching_area_center_.x(), searching_area_center_.y());
+}
+
 
 }
 

@@ -3,11 +3,13 @@
     <arg name="input_next_cp" default="input_next_cp"/>
     <arg name="input_imu" default="input_imu"/>
     <arg name="input_camera_yaw" default="input_camera_yaw"/>
+    <arg name="input_planning_leg_id" default="input_planning_leg_id"/>
 
     <arg name="output_imu" default="output_imu"/>
     <arg name="output_next_cp" default="output_next_cp"/>
     <arg name="output_yaw_rate" default="output_yaw_rate"/>
     <arg name="output_camera_yaw" default="output_camera_yaw"/>
+    <arg name="output_planning_leg_id" default="output_planning_leg_id"/>
 
 
     <node pkg="micro_ros_interface" type="micro_ros_interface_node" name="micro_ros_interface_node"
@@ -16,10 +18,13 @@
         <remap from="input_yaw_rate" to="$(arg input_yaw_rate)"/>
         <remap from="input_next_cp" to="$(arg input_next_cp)"/>
         <remap from="input_imu" to="$(arg input_imu)"/>
+        <remap from="input_planning_leg_id" to="$(arg input_planning_leg_id)"/>
 
         <!-- output -->
         <remap from="output_yaw_rate" to="$(arg output_yaw_rate)"/>
         <remap from="output_next_cp" to="$(arg output_next_cp)"/>
         <remap from="output_imu" to="$(arg output_imu)"/>
+        <remap from="output_planning_leg_id" to="$(arg output_planning_leg_id)"/>
+
     </node>
 </launch>

@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
+#include <std_msgs/Int8.h>
 #include <std_msgs/Float32.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PointStamped.h>
@@ -18,6 +19,8 @@ class MicroRosInterface {
         // to ros
         ros::Publisher imu_pub_;
         ros::Publisher camera_yaw_pub_;
+        ros::Publisher planning_leg_id_pub_;
+        ros::Publisher planning_cp_side_pub_;
 
         // from ros
         ros::Subscriber next_cp_sub_;
@@ -26,10 +29,12 @@ class MicroRosInterface {
         // from micro computer 
         ros::Subscriber imu_sub_;
         ros::Subscriber camera_yaw_sub_;
+        ros::Subscriber planning_leg_id_sub_;
 
         // message 
         sensor_msgs::Imu imu_msg_;
         geometry_msgs::Point next_cp_msg_;
+        std_msgs::Int8 planning_cp_side_msg_;
 
     public:
         MicroRosInterface();
@@ -39,6 +44,7 @@ class MicroRosInterface {
         void nextCpCallback(const geometry_msgs::PointStamped::ConstPtr& msg);
         void yawRateCallback(const std_msgs::Float32::ConstPtr& msg);
         void cameraYawCallback(const std_msgs::Float32::ConstPtr& msg);
+        void planningLegIdCallback(const std_msgs::Int8::ConstPtr& msg);
 };
 
 }

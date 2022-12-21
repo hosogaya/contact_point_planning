@@ -12,6 +12,7 @@ MicroRosInterface::MicroRosInterface()
     // to ros
     imu_pub_ = nh_.advertise<sensor_msgs::Imu>("output_imu", 1);
     camera_yaw_pub_ = nh_.advertise<std_msgs::Float32>("output_camera_yaw", 1);
+    planning_leg_id_pub_ = nh_.advertise<std_msgs::Int8>("output_planning_leg_id",1);
 
     // from ros
     yaw_rate_sub_ = nh_.subscribe("input_yaw_rate", 10, &MicroRosInterface::yawRateCallback, this);
@@ -20,6 +21,7 @@ MicroRosInterface::MicroRosInterface()
     // from micro computer
     imu_sub_ = nh_.subscribe("input_imu", 10, &MicroRosInterface::imuCallback, this);
     camera_yaw_sub_ = nh_.subscribe("input_camera_yaw", 10, &MicroRosInterface::cameraYawCallback, this);
+    planning_leg_id_sub_ = nh_.subscribe("input_planning_leg_id", 10, &MicroRosInterface::planningLegIdCallback, this);
 }   
 
 
@@ -42,6 +44,10 @@ void MicroRosInterface::yawRateCallback(const std_msgs::Float32::ConstPtr& msg) 
 
 void MicroRosInterface::cameraYawCallback(const std_msgs::Float32::ConstPtr& msg) {
     camera_yaw_pub_.publish(*msg);   
+}
+
+void MicroRosInterface::planningLegIdCallback(const std_msgs::Int8::ConstPtr& msg) {
+    planning_leg_id_pub_.publish(*msg);
 }
 
 } // namespace interface

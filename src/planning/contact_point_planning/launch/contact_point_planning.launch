@@ -2,6 +2,7 @@
     <arg name="nodelet_manager" default="nodelet_manager"/>
     <arg name="input_pc2" default="/input_pc2"/>
     <arg name="input_gm" default="/input_gm"/>
+    <arg name="input_planning_leg_id" default="input_planning_leg_id"/>
     <arg name="output_gm" default="/output_gm"/>
     <arg name="output_cp" default="/output_cp"/>
 
@@ -22,6 +23,7 @@
 
         <remap from="/input_pc2" to="$(arg input_pc2)" />
         <remap from="/input_gm" to="$(arg input_gm)" />
+        <remap from="input_planning_leg_id" to="$(arg input_planning_leg_id)"/>
         <remap from="/output_gm" to="$(arg output_gm)"/>
         <remap from="/output_cp" to="$(arg output_cp)"/>
     </node>

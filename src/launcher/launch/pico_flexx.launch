@@ -61,7 +61,8 @@
         <include file="$(find contact_point_planning)/launch/contact_point_planning.launch">
             <arg name="nodelet_manager" value="$(arg nodelet_manager)_contact_point_planning"/>
             <arg name="input_pc2" value="/transform/transformed_pc2"/> 
-            <arg name="input_gm" value="/transform/grid_map_filtered"/> 
+            <arg name="input_gm" value="/transform/grid_map_filtered"/>
+            <arg name="input_planning_leg_id" value="/interface/planning_leg_id"/> 
             <arg name="output_gm" value="planning_map"/>
             <arg name="output_cp" value="planned_contact_point"/>
         </include>
@@ -85,10 +86,13 @@
             <arg name="input_next_cp" value="/controller/planned_cp_ref"/>
             <arg name="input_imu" value="/teensy/imu"/>
             <arg name="input_camera_yaw" value="/teensy/camera_yaw"/>
+            <arg name="input_planning_leg_id" value="/teensy/planning_leg_id"/>
+
             <arg name="output_imu" value="imu"/>
             <arg name="output_next_cp" value="planned_cp"/>
             <arg name="output_yaw_rate" value="yaw_rate"/>
             <arg name="output_camera_yaw" value="camera_yaw"/>
+            <arg name="output_planning_leg_id" value="planning_leg_id"/>
         </include>
     </group>
 
