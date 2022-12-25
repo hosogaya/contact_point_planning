@@ -8,6 +8,7 @@
 
 /* custom messages */
 #include <fcp_msgs/Behavior.h>
+#include <fcp_msgs/PlannedContactPoint.h>
 
 
 namespace Controller {
@@ -20,7 +21,8 @@ class JoyStickController{
     /** functions */
     private:
         void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg);
-        void cpCallback(const geometry_msgs::PointStamped::ConstPtr& msg);
+        // void cpCallback(const geometry_msgs::PointStamped::ConstPtr& msg);
+        void cpCallback(const fcp_msgs::PlannedContactPoint::ConstPtr & msg);
         void timerCallback(const ros::TimerEvent& e);
         void publishCP();
     
@@ -43,7 +45,8 @@ class JoyStickController{
         std_msgs::Float32 yaw_rate_msg_;
         std_msgs::Float32MultiArray attitude_msg_;
         fcp_msgs::Behavior behavior_msg_;
-        geometry_msgs::PointStamped cp_msg_;
+        // geometry_msgs::PointStamped cp_msg_;
+        fcp_msgs::PlannedContactPoint cp_msg_;
         bool get_cp_ = false;
         bool get_joy_ = false;
 

@@ -1,5 +1,5 @@
 <launch>
-    <arg name="use_joy_stick" default="false"/>
+    <arg name="use_joy_stick" default="true"/>
 
     <arg name="camera_name" default="pico_flexx"/>
     <arg name="sensor_id" default=""/>

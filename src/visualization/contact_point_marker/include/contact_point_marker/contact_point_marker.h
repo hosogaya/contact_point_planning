@@ -3,6 +3,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include <visualization_msgs/Marker.h>
 
+#include <fcp_msgs/PlannedContactPoint.h>
 
 namespace visualization {
 
@@ -17,7 +18,8 @@ class ContactPointMarker {
 
         bool publish_dummy_;
 
-        void callbackContactPointMarker(const geometry_msgs::PointStamped::ConstPtr& msg);
+        // void callbackContactPointMarker(const geometry_msgs::PointStamped::ConstPtr& msg);
+        void callbackContactPointMarker(const fcp_msgs::PlannedContactPoint::ConstPtr& msg);
         void timerCallbackPublishDummy(const ros::TimerEvent& e);
 
     public:

@@ -14,7 +14,8 @@ void ContactPointPlanning::onInit() {
     sub_gm_ = nh_.subscribe("/input_gm", 1, &ContactPointPlanning::callbackGM, this);
     planning_leg_id_sub_ =  nh_.subscribe("input_planning_leg_id", 1, &ContactPointPlanning::planningLegIdCallback, this);
     pub_gm_ = nh_.advertise<grid_map_msgs::GridMap>("/output_gm", 1);
-    pub_contact_point_ = nh_.advertise<geometry_msgs::PointStamped>("/output_cp", 1);
+    // pub_contact_point_ = nh_.advertise<geometry_msgs::PointStamped>("/output_cp", 1);
+    pub_contact_point_ = nh_.advertise<fcp_msgs::PlannedContactPoint>("/output_cp", 1);
 
     pnh_.param<std::string>("variance_layer", variance_layer_, "variance");
     pnh_.param<std::string>("input_layer", input_layer_, "elevation_filtered");
@@ -38,6 +39,7 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     /** Create reference of Marix for variance layer */
     if (!map.exists(input_layer_)) return; // 
 
+    if (planning_leg_id_<0 || planning_leg_id_ > 5) return;
     // check whether the searching are is in the grid map
     try {
         map.atPosition(input_layer_, searching_area_center_);
@@ -174,6 +176,8 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
         planned_cp_msg_.point.x = pos(0);
         planned_cp_msg_.point.y = pos(1);
         planned_cp_msg_.point.z = height;
+        
+        planned_cp_msg_.leg_id = planning_leg_id_;
 
         pub_contact_point_.publish(planned_cp_msg_);
         ROS_INFO("Publish pose message");

@@ -10,6 +10,7 @@
 #include <grid_map_ros/grid_map_ros.hpp>
 #include <grid_map_msgs/GetGridMap.h>
 #include <std_msgs/Int8.h>
+#include <fcp_msgs/PlannedContactPoint.h>
 
 namespace contact_point_planning {
 
@@ -24,7 +25,8 @@ class ContactPointPlanning : public nodelet::Nodelet
         std::string input_layer_;
         std::string variance_layer_;
 
-        geometry_msgs::PointStamped planned_cp_msg_;
+        // geometry_msgs::PointStamped planned_cp_msg_;
+        fcp_msgs::PlannedContactPoint planned_cp_msg_;
 
         int8_t planning_leg_id_;
         grid_map::Position searching_area_center_;

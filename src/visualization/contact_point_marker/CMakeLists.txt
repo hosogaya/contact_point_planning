@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   visualization_msgs
   geometry_msgs
+  fcp_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES contact_point_marker
- CATKIN_DEPENDS roscpp std_msgs visualization_msgs geometry_msgs
+ CATKIN_DEPENDS roscpp std_msgs visualization_msgs geometry_msgs fcp_msgs
 #  DEPENDS system_lib
 )
 

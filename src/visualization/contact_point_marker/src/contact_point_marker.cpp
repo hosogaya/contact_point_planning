@@ -14,7 +14,8 @@ ContactPointMarker::ContactPointMarker() : nh_("~") {
 
 ContactPointMarker::~ContactPointMarker() {}
 
-void ContactPointMarker::callbackContactPointMarker(const geometry_msgs::PointStamped::ConstPtr& msg) {
+// void ContactPointMarker::callbackContactPointMarker(const geometry_msgs::PointStamped::ConstPtr& msg) {
+void ContactPointMarker::callbackContactPointMarker(const fcp_msgs::PlannedContactPoint::ConstPtr& msg) {
 
     marker_msg_.header = msg->header;
     marker_msg_.pose.position.x = msg->point.x;

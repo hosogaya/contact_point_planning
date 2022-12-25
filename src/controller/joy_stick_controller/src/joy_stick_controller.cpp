@@ -11,7 +11,8 @@ JoyStickController::JoyStickController(): nh_(), pnh_("~") {
     yaw_rate_pub_ = nh_.advertise<std_msgs::Float32>("output_yaw_rate",1);
     attitude_pub_ = nh_.advertise<std_msgs::Float32MultiArray>("output_attitude",1);
     behavior_pub_ = nh_.advertise<fcp_msgs::Behavior>("output_behavior", 1);
-    contact_point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("output_cp", 1);
+    // contact_point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("output_cp", 1);
+    contact_point_pub_ = nh_.advertise<fcp_msgs::PlannedContactPoint>("output_cp", 1);
     // joystick_pub_ = nh_.advertise<sensor_msgs::Joy>("output_joy", 1);
 
     /** subscribers */
@@ -39,7 +40,8 @@ void JoyStickController::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) 
 }
 
 
-void JoyStickController::cpCallback(const geometry_msgs::PointStamped::ConstPtr& msg) {
+// void JoyStickController::cpCallback(const geometry_msgs::PointStamped::ConstPtr& msg) {
+void JoyStickController::cpCallback(const fcp_msgs::PlannedContactPoint::ConstPtr& msg) {
     cp_msg_ = *msg;
     get_cp_ = true;
 }
@@ -50,9 +52,7 @@ void JoyStickController::timerCallback(const ros::TimerEvent& e) {
     if (!get_joy_) return;
     /** set data of messages according to last_joy_cmd_ */
 
-    // if (last_joy_cmd_.buttons[circle_]) {
-    //     publishCP();
-    // }
+    publishCP();
     /** yaw rate */
     float yaw_x = last_joy_cmd_.axes[LV_axis_];
     float yaw_y = last_joy_cmd_.axes[LH_axis_];
