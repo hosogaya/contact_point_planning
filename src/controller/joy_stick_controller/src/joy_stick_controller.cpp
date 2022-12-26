@@ -51,8 +51,8 @@ void JoyStickController::timerCallback(const ros::TimerEvent& e) {
     
     if (!get_joy_) return;
     /** set data of messages according to last_joy_cmd_ */
-
-    publishCP();
+    if (last_joy_cmd_.buttons[circle_]) publishCP();
+    
     /** yaw rate */
     float yaw_x = last_joy_cmd_.axes[LV_axis_];
     float yaw_y = last_joy_cmd_.axes[LH_axis_];

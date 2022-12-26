@@ -39,15 +39,15 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
     /** Create reference of Marix for variance layer */
     if (!map.exists(input_layer_)) return; // 
 
-    if (planning_leg_id_<0 || planning_leg_id_ > 5) return;
-    // check whether the searching are is in the grid map
-    try {
-        map.atPosition(input_layer_, searching_area_center_);
-    }
-    catch (std::out_of_range& e) {
-        ROS_INFO("%s", e.what());
-        return;
-    }
+    // if (planning_leg_id_<0 || planning_leg_id_ > 5) return;
+    // // check whether the searching are is in the grid map
+    // try {
+    //     map.atPosition(input_layer_, searching_area_center_);
+    // }
+    // catch (std::out_of_range& e) {
+    //     ROS_INFO("%s", e.what());
+    //     return;
+    // }
 
     /** create variance layer */
     /** add layer for variance */
@@ -158,6 +158,7 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
         ROS_INFO("Information of the cell is extracted");
 
         if (!std::isfinite(variance)) continue;
+        
         if (variance < solution_variance) {
             solution_variance = variance;
             solution_ind = index;

@@ -32,6 +32,8 @@ namespace transform_pico_flexx_to_body {
             float height_;
             float radius_;
 
+            ros::Timer timer_;
+
             tf2_ros::TransformBroadcaster tf_br_;
             tf2_ros::StaticTransformBroadcaster static_tf_br_;
             geometry_msgs::TransformStamped transform_pico_flexx_base_to_focus_;

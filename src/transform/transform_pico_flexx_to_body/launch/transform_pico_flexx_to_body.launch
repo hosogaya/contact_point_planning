@@ -4,8 +4,10 @@
     <arg name="body_frame" default="body"/>
     <arg name="base_link" default="base_link"/>
 
-    <arg name="pico_flexx_base_height" default="124.489*1e-3"/>
-    <arg name="pico_flexx_base_radius" default="83.549*1e-3"/>
+    <arg name="pico_flexx_base_height" default="119.354*1e-3"/>
+    <!-- <arg name="pico_flexx_base_height" default="124.489*1e-3"/> -->
+    <arg name="pico_flexx_base_radius" default="82.549*1e-3"/>
+    <!-- <arg name="pico_flexx_base_radius" default="83.549*1e-3"/> -->
 
     <arg name="input_pc2" default="/input_pc2"/>
     <arg name="input_yaw" default="/input_yaw"/>

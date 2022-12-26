@@ -93,6 +93,7 @@
             <arg name="output_yaw_rate" value="yaw_rate"/>
             <arg name="output_camera_yaw" value="camera_yaw"/>
             <arg name="output_planning_leg_id" value="planning_leg_id"/>
+            <arg name="output_planned_leg_id" value="planned_leg_id"/>
         </include>
     </group>
 

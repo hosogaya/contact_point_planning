@@ -73,13 +73,20 @@ namespace transform_pico_flexx_to_body {
     void TransformPicoFlexxToBody::cameraYawCallback(const std_msgs::Float32::ConstPtr &yaw_msg) {
         yaw_ = yaw_msg->data;
 
-        transform_body_to_pico_flexx_base_.transform.rotation.x = 0.0f;
-        transform_body_to_pico_flexx_base_.transform.rotation.y = 0.0f;
-        transform_body_to_pico_flexx_base_.transform.rotation.z = std::sin(yaw_*0.5f);
-        transform_body_to_pico_flexx_base_.transform.rotation.z = std::cos(yaw_*0.5f);
+        tf2::Quaternion q_body_to_pico_base;
+        q_body_to_pico_base.setRPY(0.0f, 0.0f, yaw_);
+        transform_body_to_pico_flexx_base_.transform.rotation.x = q_body_to_pico_base.getX();
+        transform_body_to_pico_flexx_base_.transform.rotation.y = q_body_to_pico_base.getY();
+        transform_body_to_pico_flexx_base_.transform.rotation.z = q_body_to_pico_base.getZ();
+        transform_body_to_pico_flexx_base_.transform.rotation.w = q_body_to_pico_base.getW();
+        // transform_body_to_pico_flexx_base_.transform.rotation.x = 0.0f;
+        // transform_body_to_pico_flexx_base_.transform.rotation.y = 0.0f;
+        // transform_body_to_pico_flexx_base_.transform.rotation.z = std::sin(yaw_*0.5f);
+        // transform_body_to_pico_flexx_base_.transform.rotation.z = std::cos(yaw_*0.5f);
         transform_body_to_pico_flexx_base_.header.stamp = ros::Time::now();
+        transform_body_to_pico_flexx_base_.header.frame_id = body_frame_;
+        transform_body_to_pico_flexx_base_.child_frame_id = pico_flexx_motor_frame_;
         
-        transform_body_to_pico_flexx_base_.header.stamp = ros::Time::now();
         tf_br_.sendTransform(transform_body_to_pico_flexx_base_);
     }
 
