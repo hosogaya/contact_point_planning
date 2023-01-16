@@ -147,10 +147,11 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
      *  create iterator for the searching area, (spiral iterator)
     */
     grid_map::Index solution_ind;
-    grid_map::Position pos;
+    grid_map::Position pos, temp_pos;
     float height;
     float solution_variance;
     solution_variance = thres_variance_;
+    geometry_msgs::Point planned_point;
     ROS_INFO("Containars are prepared");
     for (grid_map::SpiralIterator iterator(map, searching_area_center_, searching_area_radius_); !iterator.isPastEnd(); ++iterator) {
         const grid_map::Index index(*iterator);
@@ -160,12 +161,18 @@ void ContactPointPlanning::callbackGM(const grid_map_msgs::GridMap::ConstPtr& ms
         if (!std::isfinite(variance)) continue;
         
         if (variance < solution_variance) {
-            solution_variance = variance;
-            solution_ind = index;
-            map.getPosition(index, pos);
             auto& h{height_map(index(0), index(1))};
-            height = h;
-            ROS_INFO("update variables");
+            map.getPosition(index, temp_pos);
+            planned_point.x = temp_pos(0);
+            planned_point.y = temp_pos(1);
+            planned_point.z = h;
+            if (inverseKinematics(planned_point)) {
+                solution_variance = variance;
+                solution_ind = index;
+                pos = temp_pos;
+                height = h;
+                ROS_INFO("update variables");
+            }
         }
     }
     ROS_INFO("Iteration is finished");
@@ -199,6 +206,47 @@ void ContactPointPlanning::planningLegIdCallback(const std_msgs::Int8::ConstPtr&
     ROS_INFO("searching are center: %f, %f", searching_area_center_.x(), searching_area_center_.y());
 }
 
+/**
+ * @brief check if the point is in the operating range
+*/
+bool ContactPointPlanning::inverseKinematics(const geometry_msgs::Point& point) 
+{
+//     float L1x, L1z, L2=100, L2=146.7;
+//     float sin01 = std::sin(M_PI*(30/180));
+//     float cos01 = std::cos(M_PI*(30/180));
+    float x1 = point.x*cos01-point.z*sin01;
+    float y1 = point.y;
+    float z1 = point.x*sin01-point.z*cos01;
+
+    float theta1 = std::atan2(y1, x1);
+
+    float x2 = x1*cos(theta1)+z1*sin(theta1)-L1x;
+    float y2 = -x1*sin(theta1)+z1*cos(theta1);
+    float z2 = z1-L1z;
+
+    float L4 = sqrt(pow(x2,2)+pow(z2,2));
+
+    float theta2 = -atan2(z2,x2)-acos((pow(L4,2)+pow(L2,2)-pow(L3,2))/(2*L4*L2));
+
+    float theta3 = M_PI-acos((pow(L2,2)+pow(L3,2)-pow(L4,2))/(2*L2*L3));
+
+    if (L4 < L2+L3)
+    {
+        if (L4 > L3-L2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+}
 
 }
 

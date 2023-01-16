@@ -39,6 +39,11 @@ class ContactPointPlanning : public nodelet::Nodelet
         void callbackGM(const grid_map_msgs::GridMap::ConstPtr& msg);
         void planningLegIdCallback(const std_msgs::Int8::ConstPtr& msg);
 
+        float L1x=64.872, L1z=62.274, L2=100, L3=146.7;
+        float sin01 = std::sin(M_PI*(30/180));
+        float cos01 = std::cos(M_PI*(30/180));
+        bool inverseKinematics(const geometry_msgs::Point& point);
+
     public:
         ContactPointPlanning();
         ~ContactPointPlanning();
