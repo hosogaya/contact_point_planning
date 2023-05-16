@@ -3,5 +3,7 @@ src/external/
 src/.vscode/
 build/
 devel/
+logs/
 .vscode/
 rosbag*
+.catkin_tools

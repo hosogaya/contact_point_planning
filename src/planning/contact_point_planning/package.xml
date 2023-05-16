@@ -59,6 +59,7 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>nodelet</build_depend>
+  <build_depend>fcp_msgs</build_depend>
   <build_export_depend>grid_map_core</build_export_depend>
   <build_export_depend>grid_map_msgs</build_export_depend>
   <build_export_depend>grid_map_pcl</build_export_depend>
@@ -69,6 +70,7 @@
   <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>nodelet</build_export_depend>
+  <build_export_depend>fcp_msgs</build_export_depend>
   <exec_depend>grid_map_core</exec_depend>
   <exec_depend>grid_map_msgs</exec_depend>
   <exec_depend>grid_map_pcl</exec_depend>
@@ -79,6 +81,7 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>nodelet</exec_depend>
+  <exec_depend>fcp_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

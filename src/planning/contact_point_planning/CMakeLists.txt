@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   nodelet
+  fcp_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -112,7 +113,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES contact_point_planning
- CATKIN_DEPENDS grid_map_core grid_map_msgs grid_map_pcl grid_map_ros pcl_ros roscpp rospy sensor_msgs std_msgs nodelet
+ CATKIN_DEPENDS grid_map_core grid_map_msgs grid_map_pcl grid_map_ros pcl_ros roscpp rospy sensor_msgs std_msgs nodelet fcp_msgs
 #  DEPENDS system_lib
 )
 
