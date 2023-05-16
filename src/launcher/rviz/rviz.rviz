@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
         - /TF1/Frames1
         - /GridMap1
         - /GridMap2
@@ -61,7 +62,7 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_link:
-          Value: true
+          Value: false
         body:
           Value: true
         pico_flexx_base:
@@ -71,9 +72,9 @@ Visualization Manager:
         pico_flexx_optical_frame:
           Value: false
       Marker Alpha: 1
-      Marker Scale: 1
+      Marker Scale: 0.5
       Name: TF
-      Show Arrows: true
+      Show Arrows: false
       Show Axes: true
       Show Names: true
       Tree:
@@ -141,7 +142,7 @@ Visualization Manager:
       Autocompute Intensity Bounds: true
       Class: grid_map_rviz_plugin/GridMap
       Color: 200; 200; 200
-      Color Layer: variance
+      Color Layer: variancenormalized
       Color Transformer: GridMapLayer
       ColorMap: default
       Enabled: true
@@ -197,7 +198,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.8187427520751953
+      Distance: 1.1484893560409546
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -213,9 +214,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9103966951370239
+      Pitch: 0.47039708495140076
       Target Frame: <Fixed Frame>
-      Yaw: 4.515467166900635
+      Yaw: 6.125478267669678
     Saved: ~
 Window Geometry:
   Displays:
